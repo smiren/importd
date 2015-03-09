@@ -556,7 +556,7 @@ class D(object):
                 self._configure_django(DEBUG=True)
             if isinstance(args[0], dict) and len(args) == 2:
                 for bp in self.blueprint_list:
-                    self.apply_blueprint(bp)
+                    self._apply_blueprint(bp)
                 return self.wsgi_application(*args)
             if self._is_management_command(args[0]):
                 self._handle_management_command(*args, **kw)
