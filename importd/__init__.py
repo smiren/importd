@@ -494,6 +494,7 @@ class D(object):
                 django.setup()
 
             self._import_django()
+            self._http_additionals()
             # self._fix_coffin_post()
 
             from django.contrib.staticfiles.urls import staticfiles_urlpatterns
@@ -548,6 +549,16 @@ class D(object):
             exc_type, exc_value, exc_traceback = sys.exc_info()
             traceback.print_exception(exc_type, exc_value, exc_traceback)
             raise SystemExit(-1)
+
+    def _http_additionals(self):
+        class HttpResponseUnauthorized(self.HttpResponse):
+            """HttpResponseUnauthorized 401"""
+            def __init__(self, content):
+                super(HttpResponseUnauthorized, self).__init__()
+                self.content = content
+                self.status_code = 401
+
+        self.HttpResponseUnauthorized = HttpResponseUnauthorized
 
     def __call__(self, *args, **kw):
         """Call instance class."""
