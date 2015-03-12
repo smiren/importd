@@ -306,15 +306,16 @@ class D(object):
 
     def get_secret_key(self):
         """Get a django secret key,try to read provided one,or generate it."""
+        import json
         try:
-            with open(self.dotslash("secret.txt"), "r") as f:
-                secret = f.readlines()[0].strip()
-        except (IOError, IndexError):
-            with open(self.dotslash("secret.txt"), "w") as f:
+            with open(self.dotslash("secrets.json"), "r") as f:
+                secret = json.load(f).get('secret_key')
+        except (IOError, IndexError, ValueError):
+            with open(self.dotslash("secrets.json"), "w") as f:
                 from string import ascii_letters, digits
                 from random import sample
                 secret = "".join(sample(ascii_letters + digits, 50))
-                f.write(secret)
+                f.write(json.dumps({'secret_key': secret}))
         finally:
             return secret
 
