@@ -123,6 +123,10 @@ class Blueprint(object):
         from fhurl import fhurl
         self.fhurl = fhurl
 
+        # Hot fix
+        # url cache
+        self.add_views = set()
+
     def add_view(self, regex, view, app=None, *args, **kw):
         """Take a regular expression and add a view to the app patterns."""
         url = self.surl(regex, view, *args, **kw)
@@ -136,7 +140,9 @@ class Blueprint(object):
     def __call__(self, *args, **kw):
         """Call the class instance."""
         if isinstance(args[0], Callable):
-            self.add_view("/{}/".format(args[0].__name__), args[0])
+            if args[0].__name__ not in self.add_views:
+                self.add_views.add(args[0].__name__)
+                self.add_view("/{}/".format(args[0].__name__), args[0])
             return args[0]
 
         def ddecorator(candidate):
