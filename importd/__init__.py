@@ -129,8 +129,10 @@ class Blueprint(object):
 
     def add_view(self, regex, view, app=None, *args, **kw):
         """Take a regular expression and add a view to the app patterns."""
-        url = self.surl(regex, view, *args, **kw)
-        self.patterns.append(url)
+        if regex not in self.add_views:
+            self.add_views.add(regex)
+            url = self.surl(regex, view, *args, **kw)
+            self.patterns.append(url)
 
     def add_form(self, regex, form_cls, app=None, *args, **kw):
         """Take a regular expression and add a form to the app patterns."""
@@ -140,9 +142,7 @@ class Blueprint(object):
     def __call__(self, *args, **kw):
         """Call the class instance."""
         if isinstance(args[0], Callable):
-            if args[0].__name__ not in self.add_views:
-                self.add_views.add(args[0].__name__)
-                self.add_view("/{}/".format(args[0].__name__), args[0])
+            self.add_view("/{}/".format(args[0].__name__), args[0])
             return args[0]
 
         def ddecorator(candidate):
